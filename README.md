@@ -25,16 +25,6 @@ graph TD;
     I --> J[World Interaction]
     J --> C
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#ccf,stroke:#333,stroke-width:1px
-    style C fill:#cfc,stroke:#333,stroke-width:1px
-    style D fill:#cff,stroke:#333,stroke-width:1px
-    style E fill:#fcf,stroke:#333,stroke-width:1px
-    style F fill:#ff9,stroke:#333,stroke-width:1px
-    style G fill:#f96,stroke:#333,stroke-width:1px
-    style H fill:#9cf,stroke:#333,stroke-width:1px
-    style I fill:#6cf,stroke:#333,stroke-width:1px
-    style J fill:#ff6,stroke:#333,stroke-width:1px
 ```
 
 ### Key Components:
