@@ -1,0 +1,80 @@
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Animaciones Esfera con Three.js</title>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			display: block;
+		}
+	</style>
+</head>
+
+<body>
+	<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+	<script>
+		let scene = new THREE.Scene();
+		let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		let renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		let geometry = new THREE.SphereGeometry(1, 32, 32);
+		let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+		let sphere = new THREE.Mesh(geometry, material);
+		scene.add(sphere);
+		camera.position.z = 5;
+
+		let clock = new THREE.Clock();
+		let state = "esperando"; // Los estados pueden ser: "esperando", "escuchando", "hablando", "pensando"
+
+		function animate() {
+			requestAnimationFrame(animate);
+			let time = clock.getElapsedTime();
+
+			switch (state) {
+				case "esperando":
+					// Gira lentamente sobre su eje
+					sphere.rotation.y += 0.01;
+					break;
+				case "pensando":
+					// Pulsación calmada y constante, a la vez que el color cambia suavemente
+					sphere.material.color.setHSL(Math.abs(Math.sin(time)) * 0.5 + 0.5, 1, 0.5);
+					let scaleListening = Math.abs(Math.sin(time)) * 0.05 + 0.95; // Oscila suavemente
+					sphere.scale.set(scaleListening, scaleListening, scaleListening);
+
+					break;
+				case "hablando":
+					// Pulsación rápida y variable
+					//el color vuelva a ser amarillo
+					sphere.material.color.set(0xffff00);
+					let scaleSpeaking = Math.abs(Math.sin(time * 5)) * 0.2 + 0.8; // Oscila de manera más exagerada
+					sphere.scale.set(scaleSpeaking, scaleSpeaking, scaleSpeaking);
+					break;
+
+			}
+
+			renderer.render(scene, camera);
+		}
+
+		animate();
+
+		// Cambiar el estado para ver diferentes animaciones
+		document.addEventListener('keydown', (event) => {
+			if (event.key === '1') {
+				state = "esperando";
+			} else if (event.key === '2') {
+				state = "escuchando";
+			} else if (event.key === '3') {
+				state = "hablando";
+			}
+		});
+	</script>
+</body>
+
+</html>
