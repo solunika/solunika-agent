@@ -1,0 +1,65 @@
+const Sense = require('../core/Sense');
+const Message = require('../core/Message');
+
+const record = require('node-record-lpcm16');
+const speech = require('@google-cloud/speech');
+
+class SoundFromMicrophone extends Sense {
+	constructor(description, consciousness) {
+		super(description, consciousness);
+		this.client = new speech.SpeechClient();
+	}
+
+	init() {
+		// Configuración para la API de reconocimiento de voz
+		const request = {
+			config: {
+				encoding: 'LINEAR16',
+				sampleRateHertz: 16000,
+				languageCode: 'es-ES', // Cambia al idioma deseado
+			},
+			interimResults: false,
+		};
+
+		// Crear un stream para el reconocimiento de voz
+		const recognizeStream = this.client
+			.streamingRecognize(request)
+			.on('error', (err) => {
+				console.error('Error en el reconocimiento de voz:', err);
+			})
+			.on('data', (data) => {
+				if (data.results[0] && data.results[0].alternatives[0]) {
+					const content = data.results[0].alternatives[0].transcript;
+					const from = 'SoundFromMicrophone';
+					let m = new Message(from, content);
+					console.log('Transcripción:', content);
+
+					if (data.results[0].isFinal) {
+						this.sendMessageToBrain(m);
+					}
+				} else {
+					console.log('\n\nSe alcanzó el límite de tiempo de transcripción\n');
+				}
+			});
+
+		// Iniciar la grabación y enviar el audio al stream de reconocimiento
+		record
+			.record({
+				sampleRateHertz: 16000,
+				threshold: 0, // Umbral de silencio
+				verbose: false,
+				recordProgram: 'rec', // También puedes probar con 'arecord' o 'sox'
+				silence: '1.0', // Segundos de silencio antes de finalizar
+			})
+			.stream()
+			.on('error', (err) => {
+				console.error('Error en la grabación:', err);
+			})
+			.pipe(recognizeStream);
+
+
+		console.log('Escuchando, presiona Ctrl+C para detener.');
+	}
+}
+
+module.exports = SoundFromMicrophone;

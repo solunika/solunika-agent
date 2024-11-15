@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"       
+      - "9230:9230"      
+    volumes:
+      - .:/app # Montar el directorio actual en el directorio de trabajo en el contenedor
+      - ./node_modules/sip.js/lib/platform/web/transport/transport.js:/app/node_modules/sip.js/lib/platform/web/transport/transport.js       
+    environment:
+      - NODE_ENV=development
